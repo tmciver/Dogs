@@ -1,6 +1,8 @@
 package dogs
 
-sealed trait Maybe[A] extends Functor[A]
+sealed trait Maybe[A] extends Functor[A] {
+  type Self[Z] = Maybe[Z]
+}
 
 object Maybe {
 
