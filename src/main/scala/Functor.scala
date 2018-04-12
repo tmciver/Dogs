@@ -1,7 +1,5 @@
 package dogs
 
-trait Functor[A] {
-  type Self[Z] <: Functor[Z]
-
-  def map[B](f: A => B): Self[B]
+trait Functor[F[_]] {
+  def map[A, B](fa: F[A])(f: A => B): F[B]
 }

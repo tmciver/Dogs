@@ -1,15 +1,15 @@
 package dogs
 
-sealed trait Maybe[A] extends Functor[A] {
-  type Self[Z] = Maybe[Z]
-}
-
 object Maybe {
 
-  case class Just[A](x: A) extends Maybe[A] {
+  sealed trait Maybe[+A]
+  case class Just[A](x: A) extends Maybe[A]
+  case object None extends Maybe[Nothing]
 
-    override def map[B](f: A => B) = {
-      Just(f(x))
+  val maybeFunctor: Functor[Maybe] = new Functor[Maybe] {
+    def map[A, B](fa: Maybe[A])(f: A => B): Maybe[B] = fa match {
+      case Just(v) => Just(f(v))
+      case None => None
     }
   }
 }
