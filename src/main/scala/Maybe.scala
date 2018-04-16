@@ -12,4 +12,15 @@ object Maybe {
       case None => None
     }
   }
+
+  val maybeApplicative: Applicative[Maybe] = new Applicative[Maybe] {
+    def pure[A](v: A): Maybe[A] = Just(v)
+    def apply[A, B](ff: Maybe[A => B])(maybe: Maybe[A]): Maybe[B] = ff match {
+      case Just(f) => maybe match {
+        case Just(x) => Just(f(x))
+        case None => None
+      }
+      case None => None
+    }
+  }
 }
