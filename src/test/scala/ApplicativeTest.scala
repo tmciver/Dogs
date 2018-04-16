@@ -42,5 +42,6 @@ class ApplicativeTest extends FlatSpec with Matchers {
     // [error]  found   : dogs.Maybe.Maybe[Int => Int]
     // [error]  required: dogs.Maybe.Maybe[Nothing => Nothing]
     // [error]     maybeApplicative.apply(composeA)(addOneA) should be (maybeApplicative.pure(addOne(x)))
+    // [error]                                      ^
   }
 }
