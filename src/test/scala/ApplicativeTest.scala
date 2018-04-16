@@ -35,13 +35,13 @@ class ApplicativeTest extends FlatSpec with Matchers {
     val doubleA = maybeApplicative.pure((i: Int) => i * 2)
     val xA = maybeApplicative.pure(1)
     def compose[A, B, C](f: A => B)(g: B => C): A => C = g compose f
-    val composeA = maybeApplicative.pure(compose _)
+    def composeA[A, B, C] = maybeApplicative.pure(compose[A, B, C] _)
 
-    maybeApplicative.apply(composeA)(addOneA) should be (maybeApplicative.pure(addOne(x)))
+    maybeApplicative.apply[Int, Int](composeA[Int, Int, Int])(addOneA) should be (maybeApplicative.pure(addOne(x)))
     // The above gives error:
-    // [error]  found   : dogs.Maybe.Maybe[Int => Int]
-    // [error]  required: dogs.Maybe.Maybe[Nothing => Nothing]
-    // [error]     maybeApplicative.apply(composeA)(addOneA) should be (maybeApplicative.pure(addOne(x)))
-    // [error]                                      ^
+    // [error]  found   : dogs.Maybe.Maybe[(Int => Int) => ((Int => Int) => (Int => Int))]
+    // [error]  required: dogs.Maybe.Maybe[Int => Int]
+    // [error]     maybeApplicative.apply[Int, Int](composeA[Int, Int, Int])(addOneA) should be (maybeApplicative.pure(addOne(x)))
+    // [error]                                              ^
   }
 }
