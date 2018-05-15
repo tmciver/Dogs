@@ -31,20 +31,23 @@ class ApplicativeTest extends FlatSpec with Matchers {
   }
 
   "An Applicative" should "satisfy the composition law." in {
-    val addOneA: Maybe[Int => Int] = maybeApplicative.pure((_: Int) + 1)
-    val doubleA: Maybe[Int => Int] = maybeApplicative.pure((i: Int) => i * 2)
-    val xA = maybeApplicative.pure(1)
+    val fa: Maybe[Int => String] = maybeApplicative.pure(_.toString)
+    val ga: Maybe[String => Boolean] = maybeApplicative.pure({
+      case s if s.length > 0 => s(0).isUpper
+      case _ => false
+    })
+    val xa = maybeApplicative.pure(1)
     def compose[A, B, C](f: A => B)(g: B => C): A => C = g compose f
     def composeA[A, B, C]: Maybe[(A => B) => (B => C) => (A => C)] = maybeApplicative.pure(compose[A, B, C] _)
 
-    val left: Maybe[Int] =
-      maybeApplicative.apply[Int, Int](
-        //maybeApplicative.apply[(B => C, A => C](ff: F[(B => C) => (A => C)])(fa: F[B => C]): F[A => C]
-        maybeApplicative.apply[Int => Int, Int => Int](
-          // maybeApplicative.apply[A => B, (B => C) => (A => C)](ff: F[(A => B) => (B => C) => (A => C)])(fa: F[A => B]): F[(B => C) => (A => C)]
-          maybeApplicative.apply[Int => Int, (Int => Int) => (Int => Int)](composeA[Int, Int, Int])(addOneA))(doubleA))(xA)
+    val left: Maybe[Boolean] =
+      maybeApplicative.apply[Int, Boolean](
+        //maybeApplicative.apply[(B => C, A => C](fa: F[(B => C) => (A => C)])(fa: F[B => C]): F[A => C]
+        maybeApplicative.apply[String => Boolean, Int => Boolean](
+          // maybeApplicative.apply[A => B, (B => C) => (A => C)](fa: F[(A => B) => (B => C) => (A => C)])(fa: F[A => B]): F[(B => C) => (A => C)]
+          maybeApplicative.apply[Int => String, (String => Boolean) => (Int => Boolean)](composeA[Int, String, Boolean])(fa))(ga))(xa)
 
-    val right: Maybe[Int] = maybeApplicative.apply(doubleA)(maybeApplicative.apply(addOneA)(xA))
+    val right: Maybe[Boolean] = maybeApplicative.apply(ga)(maybeApplicative.apply(fa)(xa))
 
     left should be (right)
 
