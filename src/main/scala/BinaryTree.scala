@@ -3,8 +3,8 @@ package dogs
 object BinaryTree {
 
   sealed trait BinaryTree[+A]
-  case class Node[A](v: A, left: BinaryTree[A], right: BinaryTree[A]) extends BinaryTree[A]
-  case object Leaf extends BinaryTree[Nothing]
+  private case class Node[A](v: A, left: BinaryTree[A], right: BinaryTree[A]) extends BinaryTree[A]
+  private case object Leaf extends BinaryTree[Nothing]
 
   val binaryTreeFunctor: Functor[BinaryTree] = new Functor[BinaryTree] {
     def map[A, B](fa: BinaryTree[A])(f: A => B): BinaryTree[B] = fa match {
@@ -16,5 +16,25 @@ object BinaryTree {
       }
       case Leaf => Leaf
     }
+  }
+
+  val empty: BinaryTree[Nothing] = Leaf
+
+  def insert[A](v: A, t: BinaryTree[A])(implicit ordering: Ordering[A]): BinaryTree[A] = t match {
+    case n@Node(w, left, right) => {
+      if (ordering.lt(v, w)) {
+        // insert into left sub-tree
+        val newLeft = insert(v, left)
+        Node(w, newLeft, right)
+      } else if (ordering.gt(v, w)) {
+        // insert into right sub-tree
+        val newRight = insert(v, right)
+        Node(w, left, newRight)
+      } else {
+        n
+      }
+    }
+    // Insert a new node in place of the Leaf.
+    case Leaf => Node(v, Leaf, Leaf)
   }
 }
