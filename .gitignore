@@ -1,4 +1,6 @@
 target
 *.class
 .ensime_cache
+.bloop
+.metals
 *~
