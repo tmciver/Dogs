@@ -20,13 +20,13 @@ object BinaryTree {
 
   val empty: BinaryTree[Nothing] = Leaf
 
-  def insert[A](v: A, t: BinaryTree[A])(implicit ordering: Ordering[A]): BinaryTree[A] = t match {
+  def insert[A: Ordering](v: A, t: BinaryTree[A]): BinaryTree[A] = t match {
     case n@Node(w, left, right) => {
-      if (ordering.lt(v, w)) {
+      if (Ordering[A].lt(v, w)) {
         // insert into left sub-tree
         val newLeft = insert(v, left)
         Node(w, newLeft, right)
-      } else if (ordering.gt(v, w)) {
+      } else if (Ordering[A].gt(v, w)) {
         // insert into right sub-tree
         val newRight = insert(v, right)
         Node(w, left, newRight)
